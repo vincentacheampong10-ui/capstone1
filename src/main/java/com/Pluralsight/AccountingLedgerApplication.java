@@ -1,9 +1,8 @@
 package com.Pluralsight;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class AccountingLedgerApplication {
     public static void main(String[] args) {
@@ -23,66 +22,91 @@ public class AccountingLedgerApplication {
 
             String choice = scanner.nextLine().trim().toUpperCase();
 
-            switch (choice) {
-                ///  In case this option is choosen, do this.
-                case "D":
-                    System.out.print("Enter deposit date (YYYY-MM-DD): ");
-                    String BanksName = scanner.nextLine();
+            HomeScreen(choice, scanner);
+        }
+    }
 
-                    System.out.print("Enter account holder name: ");
-                    String accountName = scanner.nextLine();
+    private static void  HomeScreen(String choice, Scanner scanner) {
+        switch (choice) {
+            ///  In case this option is choosen, do this.
+            case "D":
+                System.out.print("Enter deposit date (YYYY-MM-DD): ");
+                String BanksName = scanner.nextLine();
 
-                    System.out.print("Enter deposit ID: ");
-                    int depositID = scanner.nextInt();
+                System.out.print("Enter account holder name: ");
+                String accountName = scanner.nextLine();
 
-                    System.out.print("Enter deposit amount: ");
-                    int depositAmount = scanner.nextInt();
+                System.out.print("Enter deposit ID: ");
+                int depositID = scanner.nextInt();
 
-                    try {
-                        FileWriter fileWriter = new FileWriter("deposits.csv", true); // 'true' for append mode
-                        PrintWriter printWriter = new PrintWriter(fileWriter);
+                System.out.print("Enter deposit amount: ");
+                int depositAmount = scanner.nextInt();
 
-                        // Save the data in CSV format: BanksName|accountName|depositID|depositAmount
-                        printWriter.println(BanksName + "|" + accountName + "|" + depositID + "|" + depositAmount);
+                try {
+                    FileWriter fileWriter = new FileWriter("deposits.csv", true); // 'true' for append mode
+                    PrintWriter printWriter = new PrintWriter(fileWriter);
 
-                        printWriter.close();
-                        System.out.println("Deposit saved successfully!");
-                             break;
+                    // Save the data in CSV format: BanksName|accountName|depositID|depositAmount
+                    printWriter.println(BanksName + "|" + accountName + "|" + depositID + "|" + depositAmount);
 
-                    } catch (IOException e) {
-                        // display stack trace if there was an error
-                        e.printStackTrace();
-                    }
-                case "p":
-                    System.out.print("Enter payment date (YYYY-MM-DD): ");
-                    String paymentDate = scanner.nextLine();
+                    printWriter.close();
+                    System.out.println("Deposit saved successfully!");
+                    break;
 
-                    System.out.print("Enter account name: ");
-                    String accountNameForDebit = scanner.nextLine();
+                } catch (IOException e) {
+                    // display stack trace if there was an error
+                    e.printStackTrace();
+                }
+            case "P":
+                System.out.print("Enter payment date (YYYY-MM-DD): ");
+                String paymentDate = scanner.nextLine();
 
-                    System.out.print("Enter deposit ID: ");
-                    int depositIDForDebit = scanner.nextInt();
+                System.out.print("Enter account name: ");
+                String accountNameForDebit = scanner.nextLine();
 
-                    System.out.print("Enter deposit amount: ");
-                    int depositAmountForDebit = scanner.nextInt();
+                System.out.print("Enter Payment ID: ");
+                int paymentId = scanner.nextInt();
 
-                    try {
-                        FileWriter fileWriter = new FileWriter("MakePayment(Debit).csv", true); // 'true' for append mode
-                        PrintWriter printWriter = new PrintWriter(fileWriter);
+                System.out.print("Enter Payment amount: ");
+                int paymentAmount = scanner.nextInt();
 
-                        // Save the data in CSV format: BanksName|accountName|depositID|depositAmount
-                        printWriter.println(paymentDate + "|" + accountNameForDebit + "|" + depositIDForDebit + "|" + depositAmountForDebit);
+                try {
+                    FileWriter fileWriter = new FileWriter("Payment.csv", true); // 'true' for append mode
+                    PrintWriter printWriter = new PrintWriter(fileWriter);
 
-                        printWriter.close();
-                        System.out.println("Payment made successfully!");
+                    // Save the data in CSV format: BanksName|accountName|depositID|depositAmount
+                    printWriter.println(paymentDate + "|" + accountNameForDebit + "|" + paymentId + "|" + paymentAmount);
+
+                    printWriter.close();
+                    System.out.println("Payment made successfully!");
+                    break;
+
+                } catch (IOException e) {
+                    // display stack trace if there was an error
+                    e.printStackTrace();
+                }
+            case "L":
+                try {
+                    FileReader fileReader = new FileReader("transactions.csv");
+                    BufferedReader bufferedReader = new BufferedReader(fileReader);
+                    String line;
+
+                    bufferedReader.readLine();
+
+                    while ((line = bufferedReader.readLine()) != null) {
+                        System.out.println(line);
+                        String[] parts = line.split(Pattern.quote("|"));
                         break;
-
-                    } catch (IOException e) {
-                        // display stack trace if there was an error
-                        e.printStackTrace();
                     }
 
-            }
+                } catch (IOException e) {
+                    // display stack trace if there was an error
+                    e.printStackTrace();
+                }
+            case "X":
+                System.out.println("You have exited the application");
+                break;
+
         }
     }
 }
