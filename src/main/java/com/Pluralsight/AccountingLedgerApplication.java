@@ -1,5 +1,8 @@
 package com.Pluralsight;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Scanner;
 
 public class AccountingLedgerApplication {
@@ -19,6 +22,42 @@ public class AccountingLedgerApplication {
             System.out.print("Enter choice: ");
 
             String choice = scanner.nextLine().trim().toUpperCase();
+
+            switch (choice) {
+                ///  In case this option is choosen, do this.
+                case "D":
+                    System.out.print("Enter deposit date (YYYY-MM-DD): ");
+                    String BanksName = scanner.nextLine();
+
+                    System.out.print("Enter account holder name: ");
+                  String accountName = scanner.nextLine();
+
+                    System.out.print("Enter deposit ID: ");
+                        int depositID = scanner.nextInt();
+
+                    System.out.print("Enter deposit amount: ");
+                    int depositAmount= scanner.nextInt();
+
+                    try {
+                        FileWriter fileWriter = new FileWriter("deposits.csv", true); // 'true' for append mode
+                        PrintWriter printWriter = new PrintWriter(fileWriter);
+
+                        // Save the data in CSV format: BanksName|accountName|depositID|depositAmount
+                        printWriter.println(BanksName + "|" + accountName + "|" + depositID + "|" + depositAmount);
+
+                        printWriter.close();
+                        System.out.println("Deposit saved successfully!");
+
+
+                    } catch (IOException e) {
+                        // display stack trace if there was an error
+                        e.printStackTrace();
+                    }
+
+
+
+
+            }
         }
     }
 }
