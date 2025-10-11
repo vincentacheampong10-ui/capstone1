@@ -10,6 +10,8 @@ public class AccountingLedgerApplication {
         Scanner scanner = new Scanner(System.in);
 
         boolean homeScreen = true;
+        boolean ledger = true;
+
 
         while (homeScreen) {
             System.out.println("\n===== HOME SCREEN =====");
@@ -87,56 +89,58 @@ public class AccountingLedgerApplication {
                     e.printStackTrace();
                 }
             case "L":
-                System.out.println("=== Ledger Menu ===");
-                System.out.println("A) All Entries");
-                System.out.println("D) Deposits Only");
-                System.out.println("X) Exit");
-                System.out.print("Choose an option: ");
-                String choice2 = scanner.nextLine().toUpperCase();
-                HomeScreen(choice2, scanner);
-
-//                try {
-//                    FileReader fileReader = new FileReader("transactions.csv");
-//                    BufferedReader bufferedReader = new BufferedReader(fileReader);
-//                    String line;
-//
-//                    bufferedReader.readLine();
-//
-//                    while ((line = bufferedReader.readLine()) != null) {
-//                        System.out.println(line);
-//                        String[] parts = line.split(Pattern.quote("|"));
-//                        break;
-//                    }
-//
-//                } catch (IOException e) {
-//                    // display stack trace if there was an error
-//                    e.printStackTrace();
+                ledgerMenu();
+                break;
 
         }
     }
 
-    private static void Ledgers(String choice2, Scanner scanner) {
-        switch (choice2) {
+    public static void ledgerMenu() {
+        Scanner scanner = new Scanner(System.in);
+        boolean ledger = true;
 
-            case "A":
-                try {
-                    FileReader fileReader = new FileReader("deposits.csv");
-                    BufferedReader bufferedReader = new BufferedReader(fileReader);
-                    String line;
+        while (ledger) {
+            System.out.println("\n===== LEDGER MENU =====");
+            System.out.println("Choose an option:");
+            System.out.println("A) All - Display all entries");
+            System.out.println("D) Deposits- Display only the entries that are deposits into the\n" +
+                    "account");
+            System.out.println("P) Payments - Display only the negative entries (or payments)");
+            System.out.println("R) Reports- A new screen that allows the user to run pre-defined\n" +
+                    "reports or to run a custom search ");
+            System.out.println("X) Exit");
+            System.out.println("Enter Choice: ");
 
-                    bufferedReader.readLine();
+            String choice2 = scanner.nextLine().trim().toLowerCase();
+            HomeScreen(choice2, scanner);
 
-                    while ((line = bufferedReader.readLine()) != null) {
-                        System.out.println(line);
-//                        String[] parts = line.split(Pattern.quote("|"));
-                        break;
+            switch (choice2) {
+                ///  In case this option is choosen, do this.
+                case "a":
+
+                    try {
+                        BufferedReader reader = new BufferedReader(new FileReader("deposits.csv"));
+                        String line = reader.readLine();
+
+                        if (line == null) {
+                            System.out.println("There is no ledger available.");
+                            ledger = false; // exit ledger
+                        } else {
+                            System.out.println(line);
+
+                            while ((line = reader.readLine()) != null) {
+                                System.out.println(line);
+                            }
+                            ledger = false; // exit after displaying
+                        }
+
+                        reader.close();
+
+                    } catch (IOException e) {
+                        System.out.println("Error: Could not read deposits.csv.");
+                        ledger = false;
                     }
-
-                } catch (IOException e) {
-                    // display stack trace if there was an error
-                    e.printStackTrace();
-
-
+            }
         }
     }
 }
