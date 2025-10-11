@@ -20,14 +20,15 @@ public class AccountingLedgerApplication {
             System.out.println("X) Exit");
             System.out.print("Enter choice: ");
 
-            String choice = scanner.nextLine().trim().toUpperCase();
+            String choice1 = scanner.nextLine().trim().toUpperCase();
 
-            HomeScreen(choice, scanner);
+            HomeScreen(choice1, scanner);
+
         }
     }
 
-    private static void  HomeScreen(String choice, Scanner scanner) {
-        switch (choice) {
+    private static void HomeScreen(String choice1, Scanner scanner) {
+        switch (choice1) {
             ///  In case this option is choosen, do this.
             case "D":
                 System.out.print("Enter deposit date (YYYY-MM-DD): ");
@@ -86,8 +87,40 @@ public class AccountingLedgerApplication {
                     e.printStackTrace();
                 }
             case "L":
+                System.out.println("=== Ledger Menu ===");
+                System.out.println("A) All Entries");
+                System.out.println("D) Deposits Only");
+                System.out.println("X) Exit");
+                System.out.print("Choose an option: ");
+                String choice2 = scanner.nextLine().toUpperCase();
+                HomeScreen(choice2, scanner);
+
+//                try {
+//                    FileReader fileReader = new FileReader("transactions.csv");
+//                    BufferedReader bufferedReader = new BufferedReader(fileReader);
+//                    String line;
+//
+//                    bufferedReader.readLine();
+//
+//                    while ((line = bufferedReader.readLine()) != null) {
+//                        System.out.println(line);
+//                        String[] parts = line.split(Pattern.quote("|"));
+//                        break;
+//                    }
+//
+//                } catch (IOException e) {
+//                    // display stack trace if there was an error
+//                    e.printStackTrace();
+
+        }
+    }
+
+    private static void Ledgers(String choice2, Scanner scanner) {
+        switch (choice2) {
+
+            case "A":
                 try {
-                    FileReader fileReader = new FileReader("transactions.csv");
+                    FileReader fileReader = new FileReader("deposits.csv");
                     BufferedReader bufferedReader = new BufferedReader(fileReader);
                     String line;
 
@@ -95,17 +128,14 @@ public class AccountingLedgerApplication {
 
                     while ((line = bufferedReader.readLine()) != null) {
                         System.out.println(line);
-                        String[] parts = line.split(Pattern.quote("|"));
+//                        String[] parts = line.split(Pattern.quote("|"));
                         break;
                     }
 
                 } catch (IOException e) {
                     // display stack trace if there was an error
                     e.printStackTrace();
-                }
-            case "X":
-                System.out.println("You have exited the application");
-                break;
+
 
         }
     }
