@@ -1,10 +1,14 @@
 package com.Pluralsight;
 
 import java.io.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.regex.Pattern;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 
 
 public class AccountingLedgerApplication {
@@ -188,6 +192,10 @@ public class AccountingLedgerApplication {
 
     public static void reportsMenu(Scanner scanner) {
         Transaction transaction= new Transaction();
+        List<Transaction> list=new ArrayList<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate  dateTime= LocalDate.now();
+
 
         boolean reports = true;
 
@@ -205,7 +213,37 @@ public class AccountingLedgerApplication {
             switch (choice3) {
                 ///  In case this option is choosen, do this.
                 case "1":
+                    try (BufferedReader bufferedReader = new BufferedReader(new FileReader("transactions.csv"))) {
+                        String line;
+                        bufferedReader.readLine(); // skip header line
 
+                        while ((line = bufferedReader.readLine()) != null) {
+                            String[] parts = line.split("\\|");
+
+                            //assigning locations of date|time|description|vendor|amount
+                            LocalDate date = LocalDate.parse(parts[0], formatter);
+                            String description = parts[2];
+                            String vendor = parts[3];
+                            double amount = Double.parseDouble(parts[4]);
+
+//                            // This basically holds the list so that its printed
+                            Transaction transaction1 = new Transaction(date, description, vendor, amount);
+                            list.add(transaction1);
+                        }
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    LocalDate today = LocalDate .now();
+                    LocalDate firstOfMonth = today.withDayOfMonth(1);
+
+                    System.out.println("===== MONTH TO DATE TRANSACTIONS =====");
+
+                    for (Transaction transaction1 : list) {
+                        if (!transaction1.getDateTime().isBefore(firstOfMonth) && !transaction1.getDateTime().isAfter(today)) {
+                            System.out.println(transaction);
+                        }
+                    }
 
 //
             }
