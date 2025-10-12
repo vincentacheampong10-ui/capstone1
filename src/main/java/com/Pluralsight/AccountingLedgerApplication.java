@@ -1,6 +1,8 @@
 package com.Pluralsight;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -8,13 +10,14 @@ import java.util.regex.Pattern;
 public class AccountingLedgerApplication {
     public static void main(String[] args) {
 
+        Transaction t = new Transaction();
         Scanner scanner = new Scanner(System.in);
 
         boolean homeScreen = true;
         boolean ledger = true;
 
 
-        while (homeScreen){
+        while (homeScreen) {
             System.out.println("\n===== HOME SCREEN =====");
             System.out.println("Choose an option:");
             System.out.println("D) Add Deposit");
@@ -174,7 +177,37 @@ public class AccountingLedgerApplication {
                         e.printStackTrace();
                     }
                     break;
+                case "R":
+                    reportsMenu(scanner);
+                    break;
 
+
+            }
+        }
+    }
+
+    public static void reportsMenu(Scanner scanner) {
+        Transaction transaction= new Transaction();
+
+        boolean reports = true;
+
+        while (reports) {
+            System.out.println("\n===== REPORTS MENU =====");
+            System.out.println("1) Month To Date");
+            System.out.println("2) Previous Month");
+            System.out.println("3) Year To Date");
+            System.out.println("4) Previous Year");
+            System.out.println("5) Search by Vendor");
+            System.out.println("0) Exit");
+            System.out.print("Enter Choice:");
+            String choice3 = scanner.nextLine().trim();
+
+            switch (choice3) {
+                ///  In case this option is choosen, do this.
+                case "1":
+
+
+//
             }
         }
     }
