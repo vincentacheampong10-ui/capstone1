@@ -78,7 +78,7 @@ public class AccountingLedgerApplication {
                     FileWriter fileWriter = new FileWriter("Payment.csv", true); // 'true' for append mode
                     PrintWriter printWriter = new PrintWriter(fileWriter);
 
-                    // Save the data in CSV format: BanksName|accountName|depositID|depositAmount
+                    // Save the data in CSV format: paymentDate|accountNameForPayment|paymentID|paymentAmount
                     printWriter.println(paymentDate + "|" + accountNameForDebit + "|" + paymentId + "|" + paymentAmount);
 
                     printWriter.close();
@@ -104,8 +104,8 @@ public class AccountingLedgerApplication {
             System.out.println("\n===== LEDGER MENU =====");
             System.out.println("Choose an option:");
             System.out.println("A) All - Display all entries");
-            System.out.println("D) Deposits - Only deposits");
-            System.out.println("P) Payments - Only payments");
+            System.out.println("E) Deposits - Only deposits");
+            System.out.println("F) Payments - Only payments");
             System.out.println("R) Reports- Custom Search");
             System.out.println("X) Exit");
             System.out.print("Enter Choice: ");
@@ -115,7 +115,7 @@ public class AccountingLedgerApplication {
 
             switch (choice2) {
                 ///  In case this option is choosen, do this.
-                case "A":
+                case "E":
                     try {
                         BufferedReader reader = new BufferedReader(new FileReader("deposits.csv"));
                         String line = reader.readLine();//Mma weremmfire se woebekasa afaho
@@ -130,6 +130,39 @@ public class AccountingLedgerApplication {
 
                             while ((line = reader.readLine()) != null) {
                                 System.out.println(line);
+                            }
+
+                            ledger = false; // exit after displaying
+                        }
+
+                        reader.close();
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case "F":
+                    try {
+                        BufferedReader reader = new BufferedReader(new FileReader("Payment.csv"));
+                        String line = reader.readLine();//Mma weremmfire se woebekasa afaho
+
+                        if (line == null) {
+                            System.out.println("There is no payment available.");
+                            ledger = false; // exit ledger
+                        } else {
+
+                            System.out.println(line);
+
+                            while ((line = reader.readLine()) != null) {
+                                String[] parts = line.split("\\|");
+                                if (parts.length >= 4) {
+                                    // Get the amount part and remove spaces
+                                    String amountText = parts[3].trim();
+                                    double amount = Double.parseDouble(amountText);
+                                    if (amount < 0) {
+                                        System.out.println(line);
+                                    }
+                                }
                             }
 
                             ledger = false; // exit after displaying
