@@ -14,12 +14,11 @@ import java.io.IOException;
 public class AccountingLedgerApplication {
     public static void main(String[] args) {
 
-        Transaction t = new Transaction();
+        Transaction transaction = new Transaction();
         Scanner scanner = new Scanner(System.in);
 
         boolean homeScreen = true;
-        boolean ledger = true;
-
+//        boolean ledger = true;
 
         while (homeScreen) {
             System.out.println("\n===== HOME SCREEN =====");
@@ -242,6 +241,42 @@ public class AccountingLedgerApplication {
                     for (Transaction transaction1 : list) {
                         if (!transaction1.getDateTime().isBefore(firstOfMonth) && !transaction1.getDateTime().isAfter(today)) {
                             System.out.println(transaction);
+                        }
+                    }
+                case "2":
+                    try (BufferedReader bufferedReader = new BufferedReader(new FileReader("transactions.csv"))) {
+                        String line;
+                        bufferedReader.readLine(); // skip header line
+
+                        while ((line = bufferedReader.readLine()) != null) {
+                            String[] parts = line.split("\\|");
+
+                            // assigning locations of date|time|description|vendor|amount
+                            LocalDate date = LocalDate.parse(parts[0], formatter);
+                            String description = parts[2];
+                            String vendor = parts[3];
+                            double amount = Double.parseDouble(parts[4]);
+
+                            // This basically holds the list so that it's printed
+                            Transaction transaction1 = new Transaction(date, description, vendor, amount);
+                            list.add(transaction1);
+                        }
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    // Calculate previous month range
+                    LocalDate now = LocalDate.now();
+                    LocalDate firstOfPreviousMonth = now.minusMonths(1).withDayOfMonth(1); // first day of previous month
+                    LocalDate lastOfPreviousMonth = now.withDayOfMonth(1).minusDays(1);   // last day of previous month
+
+                    System.out.println("===== PREVIOUS MONTH TRANSACTIONS =====");
+
+                    for (Transaction transaction1 : list) {
+                        if (!transaction1.getDateTime().isBefore(firstOfPreviousMonth) && !transaction1.getDateTime().isAfter(lastOfPreviousMonth)) {
+                            System.out.println(transaction1);
+                            break;
                         }
                     }
 
