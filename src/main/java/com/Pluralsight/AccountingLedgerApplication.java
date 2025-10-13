@@ -103,7 +103,6 @@ public class AccountingLedgerApplication {
     }
 
     public static void ledgerMenu(Scanner scanner) {
-//        Scanner scanner = new Scanner(System.in);
         boolean ledger = true;
 
         while (ledger) {
@@ -121,6 +120,22 @@ public class AccountingLedgerApplication {
 
             switch (choice2) {
                 ///  In case this option is choosen, do this.
+                case "A":
+                    try {
+                        BufferedReader reader = new BufferedReader(new FileReader("transactions.csv"));
+                        String line;
+                        reader.readLine();//Mma weremmfire se woebekasa afaho
+
+                        System.out.println("===== ALL TRANSACTIONS =====");
+                        while ((line = reader.readLine()) != null) {
+                            System.out.println(line);
+                        }
+
+                        reader.close();
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 case "E":
                     try {
                         BufferedReader reader = new BufferedReader(new FileReader("deposits.csv"));
@@ -190,10 +205,10 @@ public class AccountingLedgerApplication {
     }
 
     public static void reportsMenu(Scanner scanner) {
-        Transaction transaction= new Transaction();
-        List<Transaction> list=new ArrayList<>();
+        Transaction transaction = new Transaction();
+        List<Transaction> list = new ArrayList<>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate  dateTime= LocalDate.now();
+        LocalDate dateTime = LocalDate.now();
 
 
         boolean reports = true;
@@ -233,7 +248,7 @@ public class AccountingLedgerApplication {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    LocalDate today = LocalDate .now();
+                    LocalDate today = LocalDate.now();
                     LocalDate firstOfMonth = today.withDayOfMonth(1);
 
                     System.out.println("===== MONTH TO DATE TRANSACTIONS =====");
@@ -279,8 +294,117 @@ public class AccountingLedgerApplication {
                             break;
                         }
                     }
+                case "3":
+                    try (BufferedReader bufferedReader = new BufferedReader(new FileReader("transactions.csv"))) {
+                        String line;
+                        bufferedReader.readLine(); // skip header line
 
-//
+                        while ((line = bufferedReader.readLine()) != null) {
+                            String[] parts = line.split("\\|");
+
+                            // assigning locations of date|time|description|vendor|amount
+                            LocalDate date = LocalDate.parse(parts[0], formatter);
+                            String description = parts[2];
+                            String vendor = parts[3];
+                            double amount = Double.parseDouble(parts[4]);
+
+                            // This basically holds the list so that it's printed
+                            Transaction transaction1 = new Transaction(date, description, vendor, amount);
+                            list.add(transaction1);
+                        }
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    // Calculate Year-To-Date range
+                    LocalDate year = LocalDate.now();
+                    LocalDate firstOfYear = year.withDayOfYear(1); // first day of this year
+
+                    System.out.println("===== YEAR TO DATE TRANSACTIONS =====");
+
+                    for (Transaction transaction1 : list) {
+                        // include transactions from the start of the year up to today
+                        if (!transaction1.getDateTime().isBefore(firstOfYear) && !transaction1.getDateTime().isAfter(year)) {
+                            System.out.println(transaction1);
+                        }
+                    }
+                    break;
+                case "4":
+                    try (BufferedReader bufferedReader = new BufferedReader(new FileReader("transactions.csv"))) {
+                        String line;
+                        bufferedReader.readLine(); // skip header line
+
+                        while ((line = bufferedReader.readLine()) != null) {
+                            String[] parts = line.split("\\|");
+
+                            // assigning locations of date|time|description|vendor|amount
+                            LocalDate date = LocalDate.parse(parts[0], formatter);
+                            String description = parts[2];
+                            String vendor = parts[3];
+                            double amount = Double.parseDouble(parts[4]);
+
+                            // This basically holds the list so that it's printed
+                            Transaction transaction1 = new Transaction(date, description, vendor, amount);
+                            list.add(transaction1);
+                        }
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    // Calculate date range for the previous year
+                    LocalDate year3 = LocalDate.now();
+                    LocalDate firstOfPreviousYear = year3.minusYears(1).withDayOfYear(1); // January 1 of last year
+                    LocalDate lastOfPreviousYear = year3.withDayOfYear(1).minusDays(1);  // December 31 of last year
+
+                    System.out.println("===== PREVIOUS YEAR TRANSACTIONS =====");
+
+                    for (Transaction transaction1 : list) {
+                        // include transactions that happened between Jan 1 and Dec 31 of last year
+                        if (!transaction1.getDateTime().isBefore(firstOfPreviousYear)
+                                && !transaction1.getDateTime().isAfter(lastOfPreviousYear)) {
+                            System.out.println(transaction1);
+                        }
+                    }
+                    break;
+                case "5":
+                    System.out.print("Enter the vendor name you want to search for: ");
+                    String searchVendor = scanner.nextLine().trim();
+
+                    try (BufferedReader bufferedReader = new BufferedReader(new FileReader("transactions.csv"))) {
+                        String line;
+                        bufferedReader.readLine(); // skip header line
+
+                        while ((line = bufferedReader.readLine()) != null) {
+                            String[] parts = line.split("\\|");
+
+                            // assigning locations of date|time|description|vendor|amount
+                            LocalDate date = LocalDate.parse(parts[0], formatter);
+                            String description = parts[2];
+                            String vendor = parts[3];
+                            double amount = Double.parseDouble(parts[4]);
+                        }
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    System.out.println("===== SEARCH RESULTS FOR VENDOR: " + searchVendor);
+
+                    boolean found = false; // to check if we find any matching vendors
+
+                    for (Transaction transaction1 : list) {
+                        // Check if the vendor name in the transaction matches what the user typed
+                        if (transaction1.getVendor().equalsIgnoreCase(searchVendor)) {
+                            System.out.println(transaction1);
+                            found = true;
+                        }
+                    }
+
+                    if (!found) {
+                        System.out.println("No transactions found for vendor: " + searchVendor);
+                    }
             }
         }
     }

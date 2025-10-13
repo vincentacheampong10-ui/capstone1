@@ -1,5 +1,6 @@
 package com.Pluralsight;
 
+import java.time.Instant;
 import java.time.LocalDate;
 
 public class Transaction {
@@ -8,6 +9,10 @@ public class Transaction {
     private String vendor;
     private String description;
     private double amount;
+
+    public Transaction(){
+
+    }
 
     public Transaction(LocalDate dateTime, String vendor, String description, double amount) {
         this.dateTime = dateTime;
@@ -46,5 +51,16 @@ public class Transaction {
 
     public void setAmount(double amount) {
         this.amount = amount;
+    }
+
+    @Override
+    public String toString() {
+        return "Transaction{" +
+                "dateTime=" + dateTime +
+                ", vendor='" + vendor + '\'' +
+                ", description='" + description + '\'' +
+                ", amount=" + amount +
+                '}';
+
     }
 }
