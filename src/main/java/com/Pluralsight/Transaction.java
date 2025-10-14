@@ -2,10 +2,11 @@ package com.Pluralsight;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Transaction {
 
-    private LocalDate dateTime;
+    private LocalDateTime dateTime;
     private String vendor;
     private String description;
     private double amount;
@@ -14,18 +15,18 @@ public class Transaction {
 
     }
 
-    public Transaction(LocalDate dateTime, String vendor, String description, double amount) {
+    public Transaction(LocalDateTime dateTime, String vendor, String description, double amount) {
         this.dateTime = dateTime;
         this.vendor = vendor;
         this.description = description;
         this.amount = amount;
     }
 
-    public LocalDate getDateTime() {
+    public LocalDateTime getDateTime() {
         return dateTime;
     }
 
-    public void setDateTime(LocalDate dateTime) {
+    public void setDateTime(LocalDateTime dateTime) {
         this.dateTime = dateTime;
     }
 

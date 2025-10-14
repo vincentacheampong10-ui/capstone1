@@ -2,6 +2,7 @@ package com.Pluralsight;
 
 import java.io.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,7 @@ public class AccountingLedgerApplication {
         Scanner scanner = new Scanner(System.in);
 
         boolean homeScreen = true;
-//        boolean ledger = true;
+
 
         while (homeScreen) {
             System.out.println("\n===== HOME SCREEN =====");
@@ -31,33 +32,33 @@ public class AccountingLedgerApplication {
 
             String choice1 = scanner.nextLine().trim().toUpperCase();
 
-            HomeScreen(choice1, scanner);
+            homeScreen(choice1, scanner);
 
         }
     }
 
-    private static void HomeScreen(String choice1, Scanner scanner) {
+    private static void homeScreen(String choice1, Scanner scanner) {
         switch (choice1) {
             ///  In case this option is choosen, do this.
             case "D":
                 System.out.print("Enter deposit date (YYYY-MM-DD): ");
-                String BanksName = scanner.nextLine();
+                String banksName = scanner.nextLine();
 
                 System.out.print("Enter account holder name: ");
                 String accountName = scanner.nextLine();
 
                 System.out.print("Enter deposit ID: ");
-                int depositID = scanner.nextInt();
+                double depositId = scanner.nextInt();
 
                 System.out.print("Enter deposit amount: ");
-                int depositAmount = scanner.nextInt();
+                double depositAmount = scanner.nextInt();
 
                 try {
                     FileWriter fileWriter = new FileWriter("deposits.csv", true); // 'true' for append mode
                     PrintWriter printWriter = new PrintWriter(fileWriter);
 
                     // Save the data in CSV format: BanksName|accountName|depositID|depositAmount
-                    printWriter.println(BanksName + "|" + accountName + "|" + depositID + "|" + depositAmount);
+                    printWriter.println(banksName + "|" + accountName + "|" + depositId + "|" + depositAmount);
 
                     printWriter.close();
                     System.out.println("Deposit saved successfully!");
@@ -67,6 +68,7 @@ public class AccountingLedgerApplication {
                     // display stack trace if there was an error
                     e.printStackTrace();
                 }
+                break;
             case "P":
                 System.out.print("Enter payment date (YYYY-MM-DD): ");
                 String paymentDate = scanner.nextLine();
@@ -124,7 +126,7 @@ public class AccountingLedgerApplication {
                     try {
                         BufferedReader reader = new BufferedReader(new FileReader("transactions.csv"));
                         String line;
-                        reader.readLine();//Mma weremmfire se woebekasa afaho
+                        reader.readLine();
 
                         System.out.println("===== ALL TRANSACTIONS =====");
                         while ((line = reader.readLine()) != null) {
@@ -136,10 +138,11 @@ public class AccountingLedgerApplication {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    break;
                 case "E":
                     try {
                         BufferedReader reader = new BufferedReader(new FileReader("deposits.csv"));
-                        String line = reader.readLine();//Mma weremmfire se woebekasa afaho
+                        String line = reader.readLine();
 
                         if (line == null) {
                             // File is empty
@@ -164,8 +167,9 @@ public class AccountingLedgerApplication {
                     break;
                 case "F":
                     try {
-                        BufferedReader reader = new BufferedReader(new FileReader("Payment.csv"));
-                        String line = reader.readLine();//Mma weremmfire se woebekasa afaho
+                        BufferedReader reader = new BufferedReader(new FileReader("transactions.csv"));
+                        String line= "";
+                        reader.readLine();
 
                         if (line == null) {
                             System.out.println("There is no payment available.");
@@ -178,10 +182,10 @@ public class AccountingLedgerApplication {
                                 String[] parts = line.split("\\|");
                                 if (parts.length >= 4) {
                                     // Get the amount part and remove spaces
-                                    String amountText = parts[3].trim();
-                                    double amount = Double.parseDouble(amountText);
+                                    String priceAmount = parts[4].trim();
+                                    double amount = Double.parseDouble(priceAmount);
                                     if (amount < 0) {
-                                        System.out.println(line);
+                                        System.out.println(priceAmount);
                                     }
                                 }
                             }
@@ -223,188 +227,164 @@ public class AccountingLedgerApplication {
             System.out.println("0) Exit");
             System.out.print("Enter Choice:");
             String choice3 = scanner.nextLine().trim();
+            DateTimeFormatter dateformatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
             switch (choice3) {
-                ///  In case this option is choosen, do this.
-                case "1":
+                case "1": // Month To Date
+                    list.clear();
                     try (BufferedReader bufferedReader = new BufferedReader(new FileReader("transactions.csv"))) {
                         String line;
-                        bufferedReader.readLine(); // skip header line
-
+                        bufferedReader.readLine(); // skip header
                         while ((line = bufferedReader.readLine()) != null) {
                             String[] parts = line.split("\\|");
-
-                            //assigning locations of date|time|description|vendor|amount
-                            LocalDate date = LocalDate.parse(parts[0], formatter);
+                            LocalDateTime transactionDateTime = LocalDateTime.parse(parts[0] + " " + parts[1], dateformatter);
                             String description = parts[2];
                             String vendor = parts[3];
                             double amount = Double.parseDouble(parts[4]);
-
-//                            // This basically holds the list so that its printed
-                            Transaction transaction1 = new Transaction(date, description, vendor, amount);
-                            list.add(transaction1);
+                            list.add(new Transaction(transactionDateTime, vendor, description, amount));
                         }
-
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    LocalDate today = LocalDate.now();
-                    LocalDate firstOfMonth = today.withDayOfMonth(1);
+
+                    LocalDateTime startOfMonth = LocalDate.now().withDayOfMonth(1).atStartOfDay();
+                    LocalDateTime now = LocalDateTime.now();
 
                     System.out.println("===== MONTH TO DATE TRANSACTIONS =====");
-
                     for (Transaction transaction1 : list) {
-                        if (!transaction1.getDateTime().isBefore(firstOfMonth) && !transaction1.getDateTime().isAfter(today)) {
-                            System.out.println(transaction);
+                        if (!transaction1.getDateTime().isBefore(startOfMonth) && !transaction1.getDateTime().isAfter(now)) {
+                            System.out.println(transaction1);
                         }
                     }
-                case "2":
+                    break;
+
+                case "2": // Previous Month
+                    list.clear();
                     try (BufferedReader bufferedReader = new BufferedReader(new FileReader("transactions.csv"))) {
                         String line;
-                        bufferedReader.readLine(); // skip header line
-
+                        bufferedReader.readLine(); // skip header
                         while ((line = bufferedReader.readLine()) != null) {
                             String[] parts = line.split("\\|");
-
-                            // assigning locations of date|time|description|vendor|amount
-                            LocalDate date = LocalDate.parse(parts[0], formatter);
+                            LocalDateTime transactionDateTime = LocalDateTime.parse(parts[0] + " " + parts[1], dateformatter);
                             String description = parts[2];
                             String vendor = parts[3];
                             double amount = Double.parseDouble(parts[4]);
-
-                            // This basically holds the list so that it's printed
-                            Transaction transaction1 = new Transaction(date, description, vendor, amount);
-                            list.add(transaction1);
+                            list.add(new Transaction(transactionDateTime, vendor, description, amount));
                         }
-
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
 
-                    // Calculate previous month range
-                    LocalDate now = LocalDate.now();
-                    LocalDate firstOfPreviousMonth = now.minusMonths(1).withDayOfMonth(1); // first day of previous month
-                    LocalDate lastOfPreviousMonth = now.withDayOfMonth(1).minusDays(1);   // last day of previous month
+                    LocalDate firstDayCurrentMonth = LocalDate.now().withDayOfMonth(1);
+                    LocalDateTime startOfPreviousMonth = firstDayCurrentMonth.minusMonths(1).atStartOfDay();
+                    LocalDateTime endOfPreviousMonth = firstDayCurrentMonth.minusDays(1).atTime(23, 59, 59);
 
                     System.out.println("===== PREVIOUS MONTH TRANSACTIONS =====");
-
                     for (Transaction transaction1 : list) {
-                        if (!transaction1.getDateTime().isBefore(firstOfPreviousMonth) && !transaction1.getDateTime().isAfter(lastOfPreviousMonth)) {
+                        if (!transaction1.getDateTime().isBefore(startOfPreviousMonth) &&
+                                !transaction1.getDateTime().isAfter(endOfPreviousMonth)) {
                             System.out.println(transaction1);
-                            break;
                         }
                     }
-                case "3":
+                    break;
+
+                case "3": // Year To Date
+                    list.clear();
                     try (BufferedReader bufferedReader = new BufferedReader(new FileReader("transactions.csv"))) {
                         String line;
-                        bufferedReader.readLine(); // skip header line
-
+                        bufferedReader.readLine();
                         while ((line = bufferedReader.readLine()) != null) {
                             String[] parts = line.split("\\|");
-
-                            // assigning locations of date|time|description|vendor|amount
-                            LocalDate date = LocalDate.parse(parts[0], formatter);
+                            LocalDateTime transactionDateTime = LocalDateTime.parse(parts[0] + " " + parts[1], dateformatter);
                             String description = parts[2];
                             String vendor = parts[3];
                             double amount = Double.parseDouble(parts[4]);
-
-                            // This basically holds the list so that it's printed
-                            Transaction transaction1 = new Transaction(date, description, vendor, amount);
-                            list.add(transaction1);
+                            list.add(new Transaction(transactionDateTime, vendor, description, amount));
                         }
-
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
 
-                    // Calculate Year-To-Date range
-                    LocalDate year = LocalDate.now();
-                    LocalDate firstOfYear = year.withDayOfYear(1); // first day of this year
+                    LocalDateTime startOfYear = LocalDate.now().withDayOfYear(1).atStartOfDay();
+                    now = LocalDateTime.now();
 
                     System.out.println("===== YEAR TO DATE TRANSACTIONS =====");
-
                     for (Transaction transaction1 : list) {
-                        // include transactions from the start of the year up to today
-                        if (!transaction1.getDateTime().isBefore(firstOfYear) && !transaction1.getDateTime().isAfter(year)) {
+                        if (!transaction1.getDateTime().isBefore(startOfYear) && !transaction1.getDateTime().isAfter(now)) {
                             System.out.println(transaction1);
                         }
                     }
                     break;
-                case "4":
+
+                case "4": // Previous Year
+                    list.clear();
                     try (BufferedReader bufferedReader = new BufferedReader(new FileReader("transactions.csv"))) {
                         String line;
-                        bufferedReader.readLine(); // skip header line
-
+                        bufferedReader.readLine();
                         while ((line = bufferedReader.readLine()) != null) {
                             String[] parts = line.split("\\|");
-
-                            // assigning locations of date|time|description|vendor|amount
-                            LocalDate date = LocalDate.parse(parts[0], formatter);
+                            LocalDateTime transactionDateTime = LocalDateTime.parse(parts[0] + " " + parts[1], dateformatter);
                             String description = parts[2];
                             String vendor = parts[3];
                             double amount = Double.parseDouble(parts[4]);
-
-                            // This basically holds the list so that it's printed
-                            Transaction transaction1 = new Transaction(date, description, vendor, amount);
-                            list.add(transaction1);
+                            list.add(new Transaction(transactionDateTime, vendor, description, amount));
                         }
-
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
 
-                    // Calculate date range for the previous year
-                    LocalDate year3 = LocalDate.now();
-                    LocalDate firstOfPreviousYear = year3.minusYears(1).withDayOfYear(1); // January 1 of last year
-                    LocalDate lastOfPreviousYear = year3.withDayOfYear(1).minusDays(1);  // December 31 of last year
+                    LocalDate firstDayCurrentYear = LocalDate.now().withDayOfYear(1);
+                    LocalDateTime startOfPreviousYear = firstDayCurrentYear.minusYears(1).atStartOfDay();
+                    LocalDateTime endOfPreviousYear = firstDayCurrentYear.minusDays(1).atTime(23, 59, 59);
 
                     System.out.println("===== PREVIOUS YEAR TRANSACTIONS =====");
-
                     for (Transaction transaction1 : list) {
-                        // include transactions that happened between Jan 1 and Dec 31 of last year
-                        if (!transaction1.getDateTime().isBefore(firstOfPreviousYear)
-                                && !transaction1.getDateTime().isAfter(lastOfPreviousYear)) {
+                        if (!transaction1.getDateTime().isBefore(startOfPreviousYear) &&
+                                !transaction1.getDateTime().isAfter(endOfPreviousYear)) {
                             System.out.println(transaction1);
                         }
                     }
                     break;
-                case "5":
+
+                case "5": // Search by Vendor
                     System.out.print("Enter the vendor name you want to search for: ");
                     String searchVendor = scanner.nextLine().trim();
 
+                    list.clear();
                     try (BufferedReader bufferedReader = new BufferedReader(new FileReader("transactions.csv"))) {
                         String line;
-                        bufferedReader.readLine(); // skip header line
-
+                        bufferedReader.readLine(); // skip header
                         while ((line = bufferedReader.readLine()) != null) {
                             String[] parts = line.split("\\|");
-
-                            // assigning locations of date|time|description|vendor|amount
-                            LocalDate date = LocalDate.parse(parts[0], formatter);
+                            LocalDateTime transactionDateTime = LocalDateTime.parse(parts[0] + " " + parts[1], dateformatter);
                             String description = parts[2];
                             String vendor = parts[3];
                             double amount = Double.parseDouble(parts[4]);
+                            list.add(new Transaction(transactionDateTime, vendor, description, amount));
                         }
-
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
 
-                    System.out.println("===== SEARCH RESULTS FOR VENDOR: " + searchVendor);
-
-                    boolean found = false; // to check if we find any matching vendors
-
+                    System.out.println("===== SEARCH RESULTS FOR VENDOR: " + searchVendor + " =====");
+                    boolean found = false;
                     for (Transaction transaction1 : list) {
-                        // Check if the vendor name in the transaction matches what the user typed
                         if (transaction1.getVendor().equalsIgnoreCase(searchVendor)) {
                             System.out.println(transaction1);
                             found = true;
                         }
                     }
-
                     if (!found) {
                         System.out.println("No transactions found for vendor: " + searchVendor);
                     }
+                    break;
+
+                case "0":
+                    reports = false;
+                    break;
+
+                default:
+                    System.out.println("Invalid choice. Please select again.");
             }
         }
     }
