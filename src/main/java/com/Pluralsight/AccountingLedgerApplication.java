@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -32,12 +31,12 @@ public class AccountingLedgerApplication {
 
             String choice1 = scanner.nextLine().trim().toUpperCase();
 
-            homeScreen(choice1, scanner);
+            runHomeScreen(choice1, scanner);
 
         }
     }
 
-    private static void homeScreen(String choice1, Scanner scanner) {
+    private static void runHomeScreen(String choice1, Scanner scanner) {
         switch (choice1) {
             ///  In case this option is choosen, do this.
             case "D":
@@ -98,13 +97,13 @@ public class AccountingLedgerApplication {
                     e.printStackTrace();
                 }
             case "L":
-                ledgerMenu(scanner);
+                runLedgerMenu(scanner);
                 break;
 
         }
     }
 
-    public static void ledgerMenu(Scanner scanner) {
+    public static void runLedgerMenu(Scanner scanner) {
         boolean ledger = true;
 
         while (ledger) {
@@ -168,7 +167,7 @@ public class AccountingLedgerApplication {
                 case "F":
                     try {
                         BufferedReader reader = new BufferedReader(new FileReader("transactions.csv"));
-                        String line= "";
+                        String line = "";
                         reader.readLine();
 
                         if (line == null) {
@@ -200,7 +199,7 @@ public class AccountingLedgerApplication {
                     }
                     break;
                 case "R":
-                    reportsMenu(scanner);
+                    runReportsMenu(scanner);
                     break;
 
 
@@ -208,9 +207,9 @@ public class AccountingLedgerApplication {
         }
     }
 
-    public static void reportsMenu(Scanner scanner) {
+    public static void runReportsMenu(Scanner scanner) {
         Transaction transaction = new Transaction();
-        List<Transaction> list = new ArrayList<>();
+        ArrayList<Transaction> list = new ArrayList<>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate dateTime = LocalDate.now();
 
