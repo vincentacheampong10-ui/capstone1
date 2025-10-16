@@ -324,7 +324,7 @@ public class AccountingLedgerApplication {
                     }
                     break;
 
-                case "4": // Previous Year
+                case "4": //Previous Year
                     list.clear();
                     try (BufferedReader bufferedReader = new BufferedReader(new FileReader("transactions.csv"))) {
                         String line;
