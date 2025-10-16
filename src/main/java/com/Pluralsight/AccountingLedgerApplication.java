@@ -39,7 +39,7 @@ public class AccountingLedgerApplication {
     private static void runHomeScreen(String choice1, Scanner scanner) {
         switch (choice1) {
             ///  In case this option is choosen, do this.
-            case "D":
+            case "D"://Add deposit
                 System.out.print("Enter deposit date (YYYY-MM-DD): ");
                 String banksName = scanner.nextLine();
 
@@ -47,7 +47,7 @@ public class AccountingLedgerApplication {
                 String accountName = scanner.nextLine();
 
                 System.out.print("Enter deposit ID: ");
-                double depositId = scanner.nextInt();
+               String depositId = scanner.nextLine();
 
                 System.out.print("Enter deposit amount: ");
                 double depositAmount = scanner.nextInt();
@@ -68,7 +68,7 @@ public class AccountingLedgerApplication {
                     e.printStackTrace();
                 }
                 break;
-            case "P":
+            case "P": //Make payment
                 System.out.print("Enter payment date (YYYY-MM-DD): ");
                 String paymentDate = scanner.nextLine();
 
@@ -76,7 +76,7 @@ public class AccountingLedgerApplication {
                 String accountNameForDebit = scanner.nextLine();
 
                 System.out.print("Enter Payment ID: ");
-                int paymentId = scanner.nextInt();
+                String paymentId = scanner.nextLine();
 
                 System.out.print("Enter Payment amount: ");
                 int paymentAmount = scanner.nextInt();
@@ -99,6 +99,11 @@ public class AccountingLedgerApplication {
             case "L":
                 runLedgerMenu(scanner);
                 break;
+            case"X":
+                break;
+
+            default:/// Catch all
+                System.out.println("Choose an option below.");
 
         }
     }
@@ -110,18 +115,18 @@ public class AccountingLedgerApplication {
             System.out.println("\n===== LEDGER MENU =====");
             System.out.println("Choose an option:");
             System.out.println("A) All - Display all entries");
-            System.out.println("E) Deposits - Only deposits");
-            System.out.println("F) Payments - Only payments");
+            System.out.println("D) Deposits - Only deposits");
+            System.out.println("P) Payments - Only payments");
             System.out.println("R) Reports- Custom Search");
             System.out.println("X) Exit");
             System.out.print("Enter Choice: ");
 
-            String choice2 = scanner.nextLine().trim().toUpperCase();
+            String choice2 = scanner.nextLine().trim().toLowerCase();
 //            ledger(choice2, scanner);
 
             switch (choice2) {
                 ///  In case this option is choosen, do this.
-                case "A":
+                case "a":
                     try {
                         BufferedReader reader = new BufferedReader(new FileReader("transactions.csv"));
                         String line;
@@ -138,7 +143,7 @@ public class AccountingLedgerApplication {
                         e.printStackTrace();
                     }
                     break;
-                case "E":
+                case "d":
                     try {
                         BufferedReader reader = new BufferedReader(new FileReader("deposits.csv"));
                         String line = reader.readLine();
@@ -164,7 +169,7 @@ public class AccountingLedgerApplication {
                         e.printStackTrace();
                     }
                     break;
-                case "F":
+                case "p":
                     try {
                         BufferedReader reader = new BufferedReader(new FileReader("transactions.csv"));
                         String line = "";
@@ -198,9 +203,13 @@ public class AccountingLedgerApplication {
                         e.printStackTrace();
                     }
                     break;
-                case "R":
+                case "r":
                     runReportsMenu(scanner);
                     break;
+                case "x":
+                    break;
+                default:
+                    System.out.println("Choose an option below.");
 
 
             }
@@ -381,9 +390,9 @@ public class AccountingLedgerApplication {
                 case "0":
                     reports = false;
                     break;
-
                 default:
-                    System.out.println("Invalid choice. Please select again.");
+                    System.out.println("Choose an option below.");
+
             }
         }
     }
