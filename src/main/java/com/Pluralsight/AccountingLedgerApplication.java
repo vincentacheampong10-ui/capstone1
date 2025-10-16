@@ -16,7 +16,6 @@ public class AccountingLedgerApplication {
 
     public static void main(String[] args) {
 
-        //    Transaction transaction = new Transaction();
         Scanner scanner = new Scanner(System.in);
 
         boolean homeScreen = true;
@@ -54,21 +53,20 @@ public class AccountingLedgerApplication {
 
             default:/// Catch all
                 System.out.println("Choose an option below.");
-
         }
     }
 
     private static void makeDeposit() {
-        System.out.print("Enter deposit date (YYYY-MM-DD): ");
+        System.out.print("Enter deposit date (YYYY-MM-DD):");
         String banksName = scanner.nextLine();
 
-        System.out.print("Enter account holder name: ");
+        System.out.print("Enter account holder name:");
         String accountName = scanner.nextLine();
 
-        System.out.print("Enter deposit ID: ");
+        System.out.print("Enter deposit ID:");
         String depositId = scanner.nextLine();
 
-        System.out.print("Enter deposit amount: ");
+        System.out.print("Enter deposit amount:");
         double depositAmount = scanner.nextInt();
 
         try {
@@ -83,23 +81,21 @@ public class AccountingLedgerApplication {
 
 
         } catch (IOException e) {
-            // display stack trace if there was an error
-            e.printStackTrace();
+            e.printStackTrace();// display stack trace if there was an error
         }
-
     }
 
     private static void makePayment() {
-        System.out.print("Enter payment date (YYYY-MM-DD): ");
+        System.out.print("Enter payment date (YYYY-MM-DD):");
         String paymentDate = scanner.nextLine();
 
-        System.out.print("Enter account name: ");
+        System.out.print("Enter account name:");
         String accountNameForDebit = scanner.nextLine();
 
-        System.out.print("Enter Payment ID: ");
+        System.out.print("Enter Payment ID:");
         String paymentId = scanner.nextLine();
 
-        System.out.print("Enter Payment amount: ");
+        System.out.print("Enter Payment amount:");
         int paymentAmount = scanner.nextInt();
 
         try {
@@ -113,10 +109,8 @@ public class AccountingLedgerApplication {
             System.out.println("Payment made successfully!");
 
         } catch (IOException e) {
-            // display stack trace if there was an error
             e.printStackTrace();
         }
-
     }
 
     public static void runLedgerMenu(Scanner scanner) {
@@ -130,10 +124,9 @@ public class AccountingLedgerApplication {
             System.out.println("P) Payments - Only payments");
             System.out.println("R) Reports- Custom Search");
             System.out.println("X) Exit");
-            System.out.print("Enter Choice: ");
+            System.out.print("Enter Choice:");
 
             String choice2 = scanner.nextLine().trim().toLowerCase();
-//            ledger(choice2, scanner);
 
             switch (choice2) {
                 ///  In case this option is choosen, do this.
@@ -221,18 +214,13 @@ public class AccountingLedgerApplication {
                     break;
                 default:
                     System.out.println("Choose an option below.");
-
-
             }
         }
     }
 
     public static void runReportsMenu(Scanner scanner) {
-        //Transaction transaction = new Transaction();
-        ArrayList<Transaction> list = new ArrayList<>();
-     //   DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-       // LocalDate dateTime = LocalDate.now();
 
+        ArrayList<Transaction> list = new ArrayList<>();
 
         boolean reports = true;
 
@@ -243,10 +231,11 @@ public class AccountingLedgerApplication {
             System.out.println("3) Year To Date");
             System.out.println("4) Previous Year");
             System.out.println("5) Search by Vendor");
+            System.out.println("6) Custom search");
             System.out.println("0) Exit");
             System.out.print("Enter Choice:");
             String choice3 = scanner.nextLine().trim();
-            DateTimeFormatter dateformatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            DateTimeFormatter dateformatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH");
 
             switch (choice3) {
                 case "1": // Month To Date
@@ -366,7 +355,7 @@ public class AccountingLedgerApplication {
                     break;
 
                 case "5": // Search by Vendor
-                    System.out.print("Enter the vendor name you want to search for: ");
+                    System.out.print("Enter the vendor name you want to search for:");
                     String searchVendor = scanner.nextLine().trim();
 
                     list.clear();
