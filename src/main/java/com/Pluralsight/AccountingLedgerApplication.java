@@ -387,12 +387,251 @@ public class AccountingLedgerApplication {
                     }
                     break;
 
+                case "6":
+                    runCustomSearchMenu();
                 case "0":
-                    reports = false;
                     break;
+
                 default:
                     System.out.println("Choose an option below.");
             }
         }
     }
+
+    public static void runCustomSearchMenu() {
+        ArrayList<Transaction> list = new ArrayList<>();
+        DateTimeFormatter dateformatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        Scanner scanner = new Scanner(System.in);
+
+        boolean search = true;
+
+        // Temporary filter variables
+        LocalDate startDate = null;
+        LocalDate endDate = null;
+        String searchDescription = "";
+        String searchVendor = "";
+        Double searchAmount = null;
+
+        while (search) {
+            System.out.println("\nCustom Search Options:");
+            System.out.println("S) Start Date");
+            System.out.println("E) End Date");
+            System.out.println("D) Description");
+            System.out.println("V) Vendor");
+            System.out.println("A) Amount");
+            System.out.println("X) Exit");
+            System.out.print("Enter Choice: ");
+            String choice = scanner.nextLine().trim().toUpperCase();
+
+            switch (choice) {
+                case "S":
+                    System.out.print("Enter the start date (YYYY-MM-DD): ");
+                    String startInput = scanner.nextLine().trim();
+                    if (!startInput.isEmpty()) {
+                        try {
+                            startDate = LocalDate.parse(startInput, dateformatter);
+                        } catch (Exception e) {
+                            System.out.println("Invalid date format.");
+                            break;
+                        }
+                    }
+
+                    // Read file and filter immediately
+                    list.clear();
+                    try (BufferedReader bufferedReader = new BufferedReader(new FileReader("transactions.csv"))) {
+                        bufferedReader.readLine();
+                        String line;
+                        while ((line = bufferedReader.readLine()) != null) {
+                            String[] parts = line.split("\\|");
+                            LocalDateTime transactionDateTime;
+                            try {
+                                transactionDateTime = LocalDateTime.parse(parts[0] + " " + parts[1], dateTimeFormatter);
+                            } catch (Exception e) {
+                                transactionDateTime = LocalDate.parse(parts[0], dateformatter).atStartOfDay();
+                            }
+                            String description = parts[2];
+                            String vendor = parts[3];
+                            double amount = Double.parseDouble(parts[4]);
+                            list.add(new Transaction(transactionDateTime, vendor, description, amount));
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    // Print filtered transactions
+                    System.out.println("\n===== START DATE FILTER RESULTS =====");
+                    for (Transaction transaction : list) {
+                        if (transaction.getDateTime().toLocalDate().isAfter(startDate.minusDays(1))) {
+                            System.out.println(transaction);
+                        }
+                    }
+                    break;
+
+                case "E":
+                    System.out.print("Enter the end date (YYYY-MM-DD): ");
+                    String endInput = scanner.nextLine().trim();
+                    if (!endInput.isEmpty()) {
+                        try {
+                            endDate = LocalDate.parse(endInput, dateformatter);
+                        } catch (Exception e) {
+                            System.out.println("Invalid date format.");
+                            break;
+                        }
+                    }
+
+                    // Read file and filter immediately
+                    list.clear();
+                    try (BufferedReader bufferedReader = new BufferedReader(new FileReader("transactions.csv"))) {
+                        bufferedReader.readLine(); // skip header
+                        String line;
+                        while ((line = bufferedReader.readLine()) != null) {
+                            String[] parts = line.split("\\|");
+                            LocalDateTime transactionDateTime;
+                            try {
+                                transactionDateTime = LocalDateTime.parse(parts[0] + " " + parts[1], dateTimeFormatter);
+                            } catch (Exception e) {
+                                transactionDateTime = LocalDate.parse(parts[0], dateformatter).atStartOfDay();
+                            }
+                            String description = parts[2];
+                            String vendor = parts[3];
+                            double amount = Double.parseDouble(parts[4]);
+                            list.add(new Transaction(transactionDateTime, vendor, description, amount));
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    // Print filtered transactions
+                    System.out.println("\n===== END DATE FILTER RESULTS =====");
+                    for (Transaction t : list) {
+                        if (t.getDateTime().toLocalDate().isBefore(endDate.plusDays(1))) {
+                            System.out.println(t);
+                        }
+                    }
+                    break;
+
+                case "D":
+                    System.out.print("Enter description keyword: ");
+                    searchDescription = scanner.nextLine().trim();
+
+                    // Read file and filter immediately
+                    list.clear();
+                    try (BufferedReader bufferedReader = new BufferedReader(new FileReader("transactions.csv"))) {
+                        bufferedReader.readLine();
+                        String line;
+                        while ((line = bufferedReader.readLine()) != null) {
+                            String[] parts = line.split("\\|");
+                            LocalDateTime transactionDateTime;
+                            try {
+                                transactionDateTime = LocalDateTime.parse(parts[0] + " " + parts[1], dateTimeFormatter);
+                            } catch (Exception e) {
+                                transactionDateTime = LocalDate.parse(parts[0], dateformatter).atStartOfDay();
+                            }
+                            String description = parts[2];
+                            String vendor = parts[3];
+                            double amount = Double.parseDouble(parts[4]);
+                            list.add(new Transaction(transactionDateTime, vendor, description, amount));
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    // Print filtered transactions
+                    System.out.println("\n===== DESCRIPTION FILTER RESULTS =====");
+                    for (Transaction t : list) {
+                        if (t.getDescription().toLowerCase().contains(searchDescription.toLowerCase())) {
+                            System.out.println(t);
+                        }
+                    }
+                    break;
+
+                case "V":
+                    System.out.print("Enter vendor name: ");
+                    searchVendor = scanner.nextLine().trim();
+
+                    // Read file and filter immediately
+                    list.clear();
+                    try (BufferedReader bufferedReader = new BufferedReader(new FileReader("transactions.csv"))) {
+                        bufferedReader.readLine();
+                        String line;
+                        while ((line = bufferedReader.readLine()) != null) {
+                            String[] parts = line.split("\\|");
+                            LocalDateTime transactionDateTime;
+                            try {
+                                transactionDateTime = LocalDateTime.parse(parts[0] + " " + parts[1], dateTimeFormatter);
+                            } catch (Exception e) {
+                                transactionDateTime = LocalDate.parse(parts[0], dateformatter).atStartOfDay();
+                            }
+                            String description = parts[2];
+                            String vendor = parts[3];
+                            double amount = Double.parseDouble(parts[4]);
+                            list.add(new Transaction(transactionDateTime, vendor, description, amount));
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    // Print filtered transactions
+                    System.out.println("\n===== VENDOR FILTER RESULTS =====");
+                    for (Transaction t : list) {
+                        if (t.getVendor().equalsIgnoreCase(searchVendor)) {
+                            System.out.println(t);
+                        }
+                    }
+                    break;
+
+                case "A":
+                    System.out.print("Enter amount: ");
+                    String amountInput = scanner.nextLine().trim();
+                    if (!amountInput.isEmpty()) {
+                        try {
+                            searchAmount = Double.parseDouble(amountInput);
+                        } catch (Exception e) {
+                            System.out.println("Invalid number format.");
+                            break;
+                        }
+                    }
+
+                    // Read file and filter immediately
+                    list.clear();
+                    try (BufferedReader bufferedReader = new BufferedReader(new FileReader("transactions.csv"))) {
+                        bufferedReader.readLine();
+                        String line;
+                        while ((line = bufferedReader.readLine()) != null) {
+                            String[] parts = line.split("\\|");
+                            LocalDateTime transactionDateTime;
+                            try {
+                                transactionDateTime = LocalDateTime.parse(parts[0] + " " + parts[1], dateTimeFormatter);
+                            } catch (Exception e) {
+                                transactionDateTime = LocalDate.parse(parts[0], dateformatter).atStartOfDay();
+                            }
+                            String description = parts[2];
+                            String vendor = parts[3];
+                            double amount = Double.parseDouble(parts[4]);
+                            list.add(new Transaction(transactionDateTime, vendor, description, amount));
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    // Print filtered transactions
+                    System.out.println("\n===== AMOUNT FILTER RESULTS =====");
+                    for (Transaction t : list) {
+                        if (t.getAmount() == searchAmount) {
+                            System.out.println(t);
+                        }
+                    }
+                    break;
+
+                case "X":
+                    search = false;
+                    break;
+
+                default:
+                    System.out.println("Invalid choice. Please select again.");
+            }
+        }
+    }
 }
+
