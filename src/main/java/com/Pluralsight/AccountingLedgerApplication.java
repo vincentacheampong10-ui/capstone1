@@ -392,7 +392,6 @@ public class AccountingLedgerApplication {
                     break;
                 default:
                     System.out.println("Choose an option below.");
-
             }
         }
     }
