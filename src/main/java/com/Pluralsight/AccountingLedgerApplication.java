@@ -12,13 +12,14 @@ import java.io.IOException;
 
 
 public class AccountingLedgerApplication {
+    static Scanner scanner = new Scanner(System.in);
+
     public static void main(String[] args) {
 
-        Transaction transaction = new Transaction();
+        //    Transaction transaction = new Transaction();
         Scanner scanner = new Scanner(System.in);
 
         boolean homeScreen = true;
-
 
         while (homeScreen) {
             System.out.println("\n===== HOME SCREEN =====");
@@ -31,15 +32,15 @@ public class AccountingLedgerApplication {
 
             String choice1 = scanner.nextLine().trim().toUpperCase();
 
-            runHomeScreen(choice1, scanner);
+            runHomeScreen(choice1);
 
         }
     }
 
-    private static void runHomeScreen(String choice1, Scanner scanner) {
+    private static void runHomeScreen(String choice1) {
         switch (choice1) {
             ///  In case this option is choosen, do this.
-            case "D"://Add deposit
+            case "D":
                 System.out.print("Enter deposit date (YYYY-MM-DD): ");
                 String banksName = scanner.nextLine();
 
@@ -47,7 +48,7 @@ public class AccountingLedgerApplication {
                 String accountName = scanner.nextLine();
 
                 System.out.print("Enter deposit ID: ");
-               String depositId = scanner.nextLine();
+                String depositId = scanner.nextLine();
 
                 System.out.print("Enter deposit amount: ");
                 double depositAmount = scanner.nextInt();
@@ -68,44 +69,49 @@ public class AccountingLedgerApplication {
                     e.printStackTrace();
                 }
                 break;
-            case "P": //Make payment
-                System.out.print("Enter payment date (YYYY-MM-DD): ");
-                String paymentDate = scanner.nextLine();
-
-                System.out.print("Enter account name: ");
-                String accountNameForDebit = scanner.nextLine();
-
-                System.out.print("Enter Payment ID: ");
-                String paymentId = scanner.nextLine();
-
-                System.out.print("Enter Payment amount: ");
-                int paymentAmount = scanner.nextInt();
-
-                try {
-                    FileWriter fileWriter = new FileWriter("Payment.csv", true); // 'true' for append mode
-                    PrintWriter printWriter = new PrintWriter(fileWriter);
-
-                    // Save the data in CSV format: paymentDate|accountNameForPayment|paymentID|paymentAmount
-                    printWriter.println(paymentDate + "|" + accountNameForDebit + "|" + paymentId + "|" + paymentAmount);
-
-                    printWriter.close();
-                    System.out.println("Payment made successfully!");
-                    break;
-
-                } catch (IOException e) {
-                    // display stack trace if there was an error
-                    e.printStackTrace();
-                }
+            case "P":
+                makePayment();
+                break;
             case "L":
                 runLedgerMenu(scanner);
                 break;
-            case"X":
+            case "X":
                 break;
 
             default:/// Catch all
                 System.out.println("Choose an option below.");
 
         }
+    }
+
+    private static void makePayment() {
+        System.out.print("Enter payment date (YYYY-MM-DD): ");
+        String paymentDate = scanner.nextLine();
+
+        System.out.print("Enter account name: ");
+        String accountNameForDebit = scanner.nextLine();
+
+        System.out.print("Enter Payment ID: ");
+        String paymentId = scanner.nextLine();
+
+        System.out.print("Enter Payment amount: ");
+        int paymentAmount = scanner.nextInt();
+
+        try {
+            FileWriter fileWriter = new FileWriter("Payment.csv", true); // 'true' for append mode
+            PrintWriter printWriter = new PrintWriter(fileWriter);
+
+            // Save the data in CSV format: paymentDate|accountNameForPayment|paymentID|paymentAmount
+            printWriter.println(paymentDate + "|" + accountNameForDebit + "|" + paymentId + "|" + paymentAmount);
+
+            printWriter.close();
+            System.out.println("Payment made successfully!");
+
+        } catch (IOException e) {
+            // display stack trace if there was an error
+            e.printStackTrace();
+        }
+
     }
 
     public static void runLedgerMenu(Scanner scanner) {
