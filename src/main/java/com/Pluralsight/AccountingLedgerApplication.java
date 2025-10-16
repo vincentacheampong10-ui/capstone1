@@ -41,33 +41,7 @@ public class AccountingLedgerApplication {
         switch (choice1) {
             ///  In case this option is choosen, do this.
             case "D":
-                System.out.print("Enter deposit date (YYYY-MM-DD): ");
-                String banksName = scanner.nextLine();
-
-                System.out.print("Enter account holder name: ");
-                String accountName = scanner.nextLine();
-
-                System.out.print("Enter deposit ID: ");
-                String depositId = scanner.nextLine();
-
-                System.out.print("Enter deposit amount: ");
-                double depositAmount = scanner.nextInt();
-
-                try {
-                    FileWriter fileWriter = new FileWriter("deposits.csv", true); // 'true' for append mode
-                    PrintWriter printWriter = new PrintWriter(fileWriter);
-
-                    // Save the data in CSV format: BanksName|accountName|depositID|depositAmount
-                    printWriter.println(banksName + "|" + accountName + "|" + depositId + "|" + depositAmount);
-
-                    printWriter.close();
-                    System.out.println("Deposit saved successfully!");
-                    break;
-
-                } catch (IOException e) {
-                    // display stack trace if there was an error
-                    e.printStackTrace();
-                }
+                makeDeposit();
                 break;
             case "P":
                 makePayment();
@@ -84,6 +58,37 @@ public class AccountingLedgerApplication {
         }
     }
 
+    private static void makeDeposit() {
+        System.out.print("Enter deposit date (YYYY-MM-DD): ");
+        String banksName = scanner.nextLine();
+
+        System.out.print("Enter account holder name: ");
+        String accountName = scanner.nextLine();
+
+        System.out.print("Enter deposit ID: ");
+        String depositId = scanner.nextLine();
+
+        System.out.print("Enter deposit amount: ");
+        double depositAmount = scanner.nextInt();
+
+        try {
+            FileWriter fileWriter = new FileWriter("transactions.csv", true); // 'true' for append mode
+            PrintWriter printWriter = new PrintWriter(fileWriter);
+
+            // Save the data in CSV format: BanksName|accountName|depositID|depositAmount
+            printWriter.println(banksName + "|" + accountName + "|" + depositId + "|" + depositAmount);
+
+            printWriter.close();
+            System.out.println("Deposit saved successfully!");
+
+
+        } catch (IOException e) {
+            // display stack trace if there was an error
+            e.printStackTrace();
+        }
+
+    }
+
     private static void makePayment() {
         System.out.print("Enter payment date (YYYY-MM-DD): ");
         String paymentDate = scanner.nextLine();
@@ -98,7 +103,7 @@ public class AccountingLedgerApplication {
         int paymentAmount = scanner.nextInt();
 
         try {
-            FileWriter fileWriter = new FileWriter("Payment.csv", true); // 'true' for append mode
+            FileWriter fileWriter = new FileWriter("transactions.csv", true); // 'true' for append mode
             PrintWriter printWriter = new PrintWriter(fileWriter);
 
             // Save the data in CSV format: paymentDate|accountNameForPayment|paymentID|paymentAmount
@@ -151,7 +156,7 @@ public class AccountingLedgerApplication {
                     break;
                 case "d":
                     try {
-                        BufferedReader reader = new BufferedReader(new FileReader("deposits.csv"));
+                        BufferedReader reader = new BufferedReader(new FileReader("transactions.csv"));
                         String line = reader.readLine();
 
                         if (line == null) {
@@ -223,10 +228,10 @@ public class AccountingLedgerApplication {
     }
 
     public static void runReportsMenu(Scanner scanner) {
-        Transaction transaction = new Transaction();
+        //Transaction transaction = new Transaction();
         ArrayList<Transaction> list = new ArrayList<>();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate dateTime = LocalDate.now();
+     //   DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+       // LocalDate dateTime = LocalDate.now();
 
 
         boolean reports = true;
