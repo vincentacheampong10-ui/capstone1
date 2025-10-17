@@ -1,8 +1,12 @@
 package com.Pluralsight;
 
+
+import com.Pluralsight.Transaction;
+
 import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -12,13 +16,13 @@ import java.io.IOException;
 
 
 public class AccountingLedgerApplication {
-    static Scanner scanner = new Scanner(System.in);
-
     public static void main(String[] args) {
 
+        Transaction transaction = new Transaction();
         Scanner scanner = new Scanner(System.in);
 
         boolean homeScreen = true;
+
 
         while (homeScreen) {
             System.out.println("\n===== HOME SCREEN =====");
@@ -31,85 +35,77 @@ public class AccountingLedgerApplication {
 
             String choice1 = scanner.nextLine().trim().toUpperCase();
 
-            runHomeScreen(choice1);
+            runHomeScreen(choice1, scanner);
 
         }
     }
 
-    private static void runHomeScreen(String choice1) {
+    private static void runHomeScreen(String choice1, Scanner scanner) {
         switch (choice1) {
             ///  In case this option is choosen, do this.
-            case "D":
-                makeDeposit();
+            case "D"://Add deposit
+                System.out.print("Enter deposit date (YYYY-MM-DD): ");
+                String banksName = scanner.nextLine();
+
+                System.out.print("Enter account holder name: ");
+                String accountName = scanner.nextLine();
+
+                System.out.print("Enter deposit ID: ");
+                double depositId = scanner.nextInt();
+
+                System.out.print("Enter deposit amount: ");
+                double depositAmount = scanner.nextInt();
+
+                String timeNow = LocalTime.now().withNano(0).toString();
+
+                try {
+                    FileWriter fileWriter = new FileWriter("transactions.csv", true); // 'true' for append mode
+                    PrintWriter printWriter = new PrintWriter(fileWriter);
+
+                    // Save the data in CSV format: BanksName|accountName|depositID|depositAmount
+                    printWriter.println(banksName +"|"+timeNow+ "|" + accountName + "|" + depositId + "|" + depositAmount);
+
+                    printWriter.close();
+                    System.out.println("Deposit saved successfully!");
+                    break;
+
+                } catch (IOException e) {
+                    // display stack trace if there was an error
+                    e.printStackTrace();
+                }
                 break;
-            case "P":
-                makePayment();
-                break;
+            case "P": //Make payment
+                System.out.print("Enter payment date (YYYY-MM-DD): ");
+                String paymentDate = scanner.nextLine();
+
+                System.out.print("Enter account name: ");
+                String accountNameForDebit = scanner.nextLine();
+
+                System.out.print("Enter Payment ID: ");
+                int paymentId = scanner.nextInt();
+
+                System.out.print("Enter Payment amount: ");
+                int paymentAmount = scanner.nextInt();
+                String currentTime = LocalTime.now().withNano(0).toString();
+                try {
+                    FileWriter fileWriter = new FileWriter("transactions.csv", true); // 'true' for append mode
+                    PrintWriter printWriter = new PrintWriter(fileWriter);
+
+                    // Save the data in CSV format: paymentDate|accountNameForPayment|paymentID|paymentAmount
+                    printWriter.println(paymentDate + "|"+currentTime +"|"+ accountNameForDebit + "|" + paymentId + "|" + paymentAmount);
+
+                    printWriter.close();
+                    System.out.println("Payment made successfully!");
+                    break;
+
+                } catch (IOException e) {
+                    // display stack trace if there was an error
+                    e.printStackTrace();
+                }
             case "L":
                 runLedgerMenu(scanner);
                 break;
-            case "X":
-                break;
 
-            default:/// Catch all
-                System.out.println("Choose an option below.");
-        }
-    }
-
-    private static void makeDeposit() {
-        System.out.print("Enter deposit date (YYYY-MM-DD):");
-        String banksName = scanner.nextLine();
-
-        System.out.print("Enter account holder name:");
-        String accountName = scanner.nextLine();
-
-        System.out.print("Enter deposit ID:");
-        String depositId = scanner.nextLine();
-
-        System.out.print("Enter deposit amount:");
-        double depositAmount = scanner.nextInt();
-
-        try {
-            FileWriter fileWriter = new FileWriter("transactions.csv", true); // 'true' for append mode
-            PrintWriter printWriter = new PrintWriter(fileWriter);
-
-            // Save the data in CSV format: BanksName|accountName|depositID|depositAmount
-            printWriter.println(banksName + "|" + accountName + "|" + depositId + "|" + depositAmount);
-
-            printWriter.close();
-            System.out.println("Deposit saved successfully!");
-
-
-        } catch (IOException e) {
-            e.printStackTrace();// display stack trace if there was an error
-        }
-    }
-
-    private static void makePayment() {
-        System.out.print("Enter payment date (YYYY-MM-DD):");
-        String paymentDate = scanner.nextLine();
-
-        System.out.print("Enter account name:");
-        String accountNameForDebit = scanner.nextLine();
-
-        System.out.print("Enter Payment ID:");
-        String paymentId = scanner.nextLine();
-
-        System.out.print("Enter Payment amount:");
-        int paymentAmount = scanner.nextInt();
-
-        try {
-            FileWriter fileWriter = new FileWriter("transactions.csv", true); // 'true' for append mode
-            PrintWriter printWriter = new PrintWriter(fileWriter);
-
-            // Save the data in CSV format: paymentDate|accountNameForPayment|paymentID|paymentAmount
-            printWriter.println(paymentDate + "|" + accountNameForDebit + "|" + paymentId + "|" + paymentAmount);
-
-            printWriter.close();
-            System.out.println("Payment made successfully!");
-
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
@@ -124,9 +120,10 @@ public class AccountingLedgerApplication {
             System.out.println("P) Payments - Only payments");
             System.out.println("R) Reports- Custom Search");
             System.out.println("X) Exit");
-            System.out.print("Enter Choice:");
+            System.out.print("Enter Choice: ");
 
             String choice2 = scanner.nextLine().trim().toLowerCase();
+//            ledger(choice2, scanner);
 
             switch (choice2) {
                 ///  In case this option is choosen, do this.
@@ -210,17 +207,18 @@ public class AccountingLedgerApplication {
                 case "r":
                     runReportsMenu(scanner);
                     break;
-                case "x":
-                    break;
-                default:
-                    System.out.println("Choose an option below.");
+
+
             }
         }
     }
 
     public static void runReportsMenu(Scanner scanner) {
-
+        Transaction transaction = new Transaction();
         ArrayList<Transaction> list = new ArrayList<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate dateTime = LocalDate.now();
+
 
         boolean reports = true;
 
@@ -235,17 +233,23 @@ public class AccountingLedgerApplication {
             System.out.println("0) Exit");
             System.out.print("Enter Choice:");
             String choice3 = scanner.nextLine().trim();
-            DateTimeFormatter dateformatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH");
+            DateTimeFormatter dateformatter = DateTimeFormatter.ofPattern("yyyy-M-dd HH:mm:ss");
+
 
             switch (choice3) {
                 case "1": // Month To Date
                     list.clear();
                     try (BufferedReader bufferedReader = new BufferedReader(new FileReader("transactions.csv"))) {
                         String line;
-                        bufferedReader.readLine(); // skip header
+                        bufferedReader.readLine();// skip header
+                        DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("yyyy-M-dd");
+                        DateTimeFormatter   formatter2 = DateTimeFormatter.ofPattern("HH:mm:ss");
+
                         while ((line = bufferedReader.readLine()) != null) {
                             String[] parts = line.split("\\|");
-                            LocalDateTime transactionDateTime = LocalDateTime.parse(parts[0] + " " + parts[1], dateformatter);
+                            LocalDate transactionDate=LocalDate.parse(parts[0],formatter1);
+                            LocalTime transactionTime=LocalTime.parse(parts[1],formatter2);
+                            LocalDateTime transactionDateTime = LocalDateTime.of(transactionDate, transactionTime);
                             String description = parts[2];
                             String vendor = parts[3];
                             double amount = Double.parseDouble(parts[4]);
@@ -324,7 +328,7 @@ public class AccountingLedgerApplication {
                     }
                     break;
 
-                case "4": //Previous Year
+                case "4": // Previous Year
                     list.clear();
                     try (BufferedReader bufferedReader = new BufferedReader(new FileReader("transactions.csv"))) {
                         String line;
@@ -355,7 +359,7 @@ public class AccountingLedgerApplication {
                     break;
 
                 case "5": // Search by Vendor
-                    System.out.print("Enter the vendor name you want to search for:");
+                    System.out.print("Enter the vendor name you want to search for: ");
                     String searchVendor = scanner.nextLine().trim();
 
                     list.clear();
@@ -389,19 +393,19 @@ public class AccountingLedgerApplication {
 
                 case "6":
                     runCustomSearchMenu();
+
                 case "0":
+                    reports = false;
                     break;
 
-                default:
-                    System.out.println("Choose an option below.");
             }
         }
     }
 
     public static void runCustomSearchMenu() {
         ArrayList<Transaction> list = new ArrayList<>();
-        DateTimeFormatter dateformatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        DateTimeFormatter dateformatter = DateTimeFormatter.ofPattern("yyyy-M-dd");
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-M-dd HH:mm");
         Scanner scanner = new Scanner(System.in);
 
         boolean search = true;
@@ -440,7 +444,7 @@ public class AccountingLedgerApplication {
                     // Read file and filter immediately
                     list.clear();
                     try (BufferedReader bufferedReader = new BufferedReader(new FileReader("transactions.csv"))) {
-                        bufferedReader.readLine();
+                        bufferedReader.readLine(); // skip header
                         String line;
                         while ((line = bufferedReader.readLine()) != null) {
                             String[] parts = line.split("\\|");
@@ -461,9 +465,9 @@ public class AccountingLedgerApplication {
 
                     // Print filtered transactions
                     System.out.println("\n===== START DATE FILTER RESULTS =====");
-                    for (Transaction transaction : list) {
-                        if (transaction.getDateTime().toLocalDate().isAfter(startDate.minusDays(1))) {
-                            System.out.println(transaction);
+                    for (Transaction t : list) {
+                        if (t.getDateTime().toLocalDate().isAfter(startDate.minusDays(1))) {
+                            System.out.println(t);
                         }
                     }
                     break;
@@ -634,4 +638,3 @@ public class AccountingLedgerApplication {
         }
     }
 }
-
