@@ -46,8 +46,8 @@ public class AccountingLedgerApplication {
         switch (choice1) {
             ///  In case this option is choosen, do this.
             case "D"://Add deposit
-                System.out.print("Enter deposit date (YYYY-MM-DD): ");
-                String banksName = scanner.nextLine();
+
+                String banksName = LocalDate.now().toString();
 
                 System.out.print("Enter account holder name: ");
                 String accountName = scanner.nextLine();
