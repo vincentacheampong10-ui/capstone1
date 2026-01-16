@@ -213,6 +213,8 @@ public class AccountingLedgerApplication {
                 case "r":
                     runReportsMenu(scanner);
                     break;
+                case "x":
+                    return;
 
 
             }
