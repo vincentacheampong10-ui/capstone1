@@ -1,7 +1,7 @@
 package com.Pluralsight;
 
 
-import com.Pluralsight.Transaction;
+
 
 import java.io.*;
 import java.time.LocalDate;
@@ -16,10 +16,12 @@ import java.io.IOException;
 
 
 public class AccountingLedgerApplication {
+   public static Scanner scanner = new Scanner(System.in);
+
     public static void main(String[] args) {
 
         Transaction transaction = new Transaction();
-        Scanner scanner = new Scanner(System.in);
+
 
         boolean homeScreen = true;
 
@@ -35,12 +37,12 @@ public class AccountingLedgerApplication {
 
             String choice1 = scanner.nextLine().trim().toUpperCase();
 
-            runHomeScreen(choice1, scanner);
+               runPaymentScreen(choice1 );
 
         }
     }
 
-    private static void runHomeScreen(String choice1, Scanner scanner) {
+    private static void runPaymentScreen(String choice1) {
         switch (choice1) {
             ///  In case this option is choosen, do this.
             case "D"://Add deposit
@@ -59,7 +61,7 @@ public class AccountingLedgerApplication {
                 String timeNow = LocalTime.now().withNano(0).toString();
 
                 try {
-                    FileWriter fileWriter = new FileWriter("transactions.csv", true); // 'true' for append mode
+                    FileWriter fileWriter = new FileWriter("deposits.csv", true); // 'true' for append mode
                     PrintWriter printWriter = new PrintWriter(fileWriter);
 
                     // Save the data in CSV format: BanksName|accountName|depositID|depositAmount
@@ -88,7 +90,7 @@ public class AccountingLedgerApplication {
                 int paymentAmount = scanner.nextInt();
                 String currentTime = LocalTime.now().withNano(0).toString();
                 try {
-                    FileWriter fileWriter = new FileWriter("transactions.csv", true); // 'true' for append mode
+                    FileWriter fileWriter = new FileWriter("Payment.csv", true); // 'true' for append mode
                     PrintWriter printWriter = new PrintWriter(fileWriter);
 
                     // Save the data in CSV format: paymentDate|accountNameForPayment|paymentID|paymentAmount
