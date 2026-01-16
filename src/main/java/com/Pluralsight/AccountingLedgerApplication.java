@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -150,7 +151,7 @@ public class AccountingLedgerApplication {
                     break;
                 case "d":
                     try {
-                        BufferedReader reader = new BufferedReader(new FileReader("transactions.csv"));
+                        BufferedReader reader = new BufferedReader(new FileReader("deposits.csv"));
                         String line = reader.readLine();
 
                         if (line == null) {
@@ -176,7 +177,7 @@ public class AccountingLedgerApplication {
                     break;
                 case "p":
                     try {
-                        BufferedReader reader = new BufferedReader(new FileReader("transactions.csv"));
+                        BufferedReader reader = new BufferedReader(new FileReader("Payment.csv"));
                         String line = "";
                         reader.readLine();
 
@@ -190,6 +191,7 @@ public class AccountingLedgerApplication {
                             while ((line = reader.readLine()) != null) {
                                 String[] parts = line.split("\\|");
                                 if (parts.length >= 4) {
+                                    System.out.println(Arrays.toString(parts));
                                     // Get the amount part and remove spaces
                                     String priceAmount = parts[4].trim();
                                     double amount = Double.parseDouble(priceAmount);
