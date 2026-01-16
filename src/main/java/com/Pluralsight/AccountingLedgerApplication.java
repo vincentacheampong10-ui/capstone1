@@ -110,7 +110,8 @@ public class AccountingLedgerApplication {
             case "L":
                 runLedgerMenu(scanner);
                 break;
-
+            case "X":
+                return;
         }
     }
 
