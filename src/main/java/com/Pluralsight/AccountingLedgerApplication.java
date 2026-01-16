@@ -57,6 +57,7 @@ public class AccountingLedgerApplication {
 
                 System.out.print("Enter deposit amount: ");
                 double depositAmount = scanner.nextInt();
+                scanner.nextLine();
 
                 String timeNow = LocalTime.now().withNano(0).toString();
 
@@ -77,8 +78,8 @@ public class AccountingLedgerApplication {
                 }
                 break;
             case "P": //Make payment
-                System.out.print("Enter payment date (YYYY-MM-DD): ");
-                String paymentDate = scanner.nextLine();
+
+                String paymentDate = LocalDate.now().toString();
 
                 System.out.print("Enter account name: ");
                 String accountNameForDebit = scanner.nextLine();
@@ -88,6 +89,7 @@ public class AccountingLedgerApplication {
 
                 System.out.print("Enter Payment amount: ");
                 int paymentAmount = scanner.nextInt();
+                scanner.nextLine();
                 String currentTime = LocalTime.now().withNano(0).toString();
                 try {
                     FileWriter fileWriter = new FileWriter("Payment.csv", true); // 'true' for append mode
